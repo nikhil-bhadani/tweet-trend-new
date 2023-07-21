@@ -46,7 +46,7 @@ environment {
 }
         }
     }
-         stage("Jar Publish") {
+        stage("Jar Publish") {
         steps {
             script {
                     echo '<--------------- Jar Publish Started --------------->'
