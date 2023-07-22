@@ -56,7 +56,7 @@ environment {
                           "files": [
                             {
                               "pattern": "jarstaging/(*)",
-                              "target": "nikhil-libs-release-local/{1}",
+                              "target": "nikhil-libs-snapshot-local/{1}",
                               "flat": "false",
                               "props" : "${properties}",
                               "exclusions": [ "*.sha1", "*.md5"]
