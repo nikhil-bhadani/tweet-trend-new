@@ -9,6 +9,7 @@ pipeline {
 
     environment {
         PATH = "/opt/apache-maven-3.9.3/bin:$PATH"
+        CLASSPATH = "/opt/apache-maven-3.9.3/commons-cli-1.5.0.jar"
     }
 
     stages {
