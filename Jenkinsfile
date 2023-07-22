@@ -1,30 +1,29 @@
-def registry = 'https://nikhilbhadani.jfrog.io/'
-
 pipeline {
     agent {
         node {
-            label 'maven'
+            label 'maven-slave' // Assuming you have a Jenkins agent with label 'maven-slave' set up for building
         }
     }
 
     environment {
-        PATH = "/opt/apache-maven-3.9.3/bin:$PATH"
-        CLASSPATH = "/opt/apache-maven-3.9.3/commons-cli-1.5.0.jar:$PATH"
+        // You don't need to specify the PATH and CLASSPATH environment variables explicitly.
+        // Jenkins will handle these for Maven on the build slave.
     }
 
     stages {
-        stage("build") {
+        stage("Build") {
             steps {
-                echo "----------- build started ----------"
-                sh 'mvn clean deploy -Dmaven.test.skip=true'
-                echo "----------- build completed ----------"
+                echo "----------- Build started ----------"
+                sh 'mvn clean package -Dmaven.test.skip=true'
+                echo "----------- Build completed ----------"
             }
         }
-        stage("test") {
+
+        stage("Unit Test") {
             steps {
-                echo "----------- unit test started ----------"
+                echo "----------- Unit test started ----------"
                 sh 'mvn surefire-report:report'
-                echo "----------- unit test completed ----------"
+                echo "----------- Unit test completed ----------"
             }
         }
 
@@ -57,12 +56,12 @@ pipeline {
             steps {
                 script {
                     echo '<--------------- Jar Publish Started --------------->'
-                    def server = Artifactory.newServer url: registry + "/artifactory", credentialsId: "artifact-cred"
+                    def server = Artifactory.newServer url: 'https://nikhilbhadani.jfrog.io/artifactory', credentialsId: 'artifact-cred'
                     def properties = "buildid=${env.BUILD_ID},commitid=${GIT_COMMIT}"
                     def uploadSpec = """{
                         "files": [
                             {
-                                "pattern": "jarstaging/(*.jar)",
+                                "pattern": "target/*.jar",
                                 "target": "nikhil-libs-release-local/{1}",
                                 "flat": "false",
                                 "props": "${properties}",
@@ -79,5 +78,3 @@ pipeline {
         }
     }
 }
-
-    
